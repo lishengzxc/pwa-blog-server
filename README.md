@@ -1,5 +1,11 @@
 # pwa-blog-server
 
+## Docker
+```
+docker build -t pwa-server .
+docker run --rm --name pwa-server-c -p 8080:8080 pwa-server
+```
+
 ## nginx
 ```
 ```
