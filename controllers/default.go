@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/PuerkitoBio/goquery"
 )
 
 type MainController struct {
@@ -14,10 +15,42 @@ func (c *MainController) Get() {
 }
 
 func (c *MainController) GetList() {
-	c.Ctx.WriteString("get list...")
+	slice := make([]map[string]interface{}, 0)
+
+	doc, _ := goquery.NewDocument("https://github.com/lishengzxc/bblog/issues")
+
+	doc.Find(".js-navigation-item").Each(func(i int, s *goquery.Selection) {
+		item := s.Find(".js-navigation-open")
+
+		title := item.Text()
+		idString, _ := item.Attr("href")
+
+		if title != "" {
+			slice = append(slice, map[string]interface{}{
+				"title": title,
+				"id": idString[25:],
+				})
+		}
+  	})
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"data": slice,
+	}
+
+	c.ServeJSON()
 }
 
 func (c *MainController) GetDetail() {
 	id := c.Ctx.Input.Param(":id")
-	c.Ctx.WriteString(id)
+
+	doc, _ := goquery.NewDocument("https://github.com/lishengzxc/bblog/issues/" + id)
+	body, _ := doc.Find(".js-comment-container").First().Find(".js-comment-body").Html()
+
+	c.Data["json"] = map[string]interface{}{
+		"success": true,
+		"data": body,
+	}
+
+	c.ServeJSON()
 }
