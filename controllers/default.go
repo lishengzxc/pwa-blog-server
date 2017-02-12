@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/astaxie/beego"
 	"github.com/PuerkitoBio/goquery"
+	"strings"
 )
 
 type MainController struct {
@@ -15,14 +16,20 @@ func (c *MainController) Get() {
 }
 
 func (c *MainController) GetList() {
+	page := c.Ctx.Input.Param(":page")
+
+	if page == "" {
+		page = "1"
+	}
+
 	slice := make([]map[string]interface{}, 0)
 
-	doc, _ := goquery.NewDocument("https://github.com/lishengzxc/bblog/issues")
+	doc, _ := goquery.NewDocument("https://github.com/lishengzxc/bblog/issues?page=" + page)
 
 	doc.Find(".js-navigation-item").Each(func(i int, s *goquery.Selection) {
 		item := s.Find(".js-navigation-open")
 
-		title := item.Text()
+		title := strings.TrimSpace(item.Text()) 
 		idString, _ := item.Attr("href")
 
 		if title != "" {

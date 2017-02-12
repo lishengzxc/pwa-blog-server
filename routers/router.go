@@ -7,6 +7,6 @@ import (
 
 func init() {
     beego.Router("/", &controllers.MainController{})
-    beego.Router("/getList", &controllers.MainController{}, "get:GetList")
+    beego.Router("/getList/?:page", &controllers.MainController{}, "get:GetList")
     beego.Router("/getDetail/:id", &controllers.MainController{}, "get:GetDetail")
 }
