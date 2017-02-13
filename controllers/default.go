@@ -53,10 +53,14 @@ func (c *MainController) GetDetail() {
 
 	doc, _ := goquery.NewDocument("https://github.com/lishengzxc/bblog/issues/" + id)
 	body, _ := doc.Find(".js-comment-container").First().Find(".js-comment-body").Html()
+	title := doc.Find(".js-issue-title").Text()
 
 	c.Data["json"] = map[string]interface{}{
 		"success": true,
-		"data": body,
+		"data": map[string]interface{}{
+			"title": strings.TrimSpace(title),
+			"body": body,
+			},
 	}
 
 	c.ServeJSON()
